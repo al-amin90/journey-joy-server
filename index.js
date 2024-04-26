@@ -1,4 +1,4 @@
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const express = require('express');
 const cors = require('cors');
 const app = express()
@@ -35,12 +35,19 @@ async function run() {
         res.send(result)
     })
       
-      app.get('/spots/:email', async (req, res) => {
-          const email = req.params.email;
-          console.log(email);
-          const query = { email: email }
-          const result = await spotsCollections.find(query).toArray()
-          res.send(result)
+    app.get('/spot/:id', async(req, res) => {
+        const id = req.params.id;
+        const query = { _id: new ObjectId(id) }
+        const result = await spotsCollections.findOne(query)
+        res.send(result)
+    })
+      
+    app.get('/spots/:email', async (req, res) => {
+        const email = req.params.email;
+        console.log(email);
+        const query = { email: email }
+        const result = await spotsCollections.find(query).toArray()
+        res.send(result)
     })
       
     app.post('/spots', async (req, res) => {
@@ -50,6 +57,26 @@ async function run() {
         res.send(result);
     })
 
+    app.patch('/spot/:id', async(req, res) => {
+        const id = req.params.id;
+        const spotInfo = req.body;
+        const filter = { _id: new ObjectId(id) }
+        const updateDoc = {
+            $set: {
+                spotName: spotInfo.spotName, 
+                AVGCost: spotInfo.AVGCost,
+                seasonality: spotInfo.seasonality,
+                visitors: spotInfo.visitors,
+                travel_time: spotInfo.travel_time,
+                countryName: spotInfo.countryName,
+                location: spotInfo.location,
+                image: spotInfo.image,
+                description: spotInfo.description,
+            }
+        }
+        const result = await spotsCollections.updateOne(filter,updateDoc)
+        res.send(result)
+    })
 
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
