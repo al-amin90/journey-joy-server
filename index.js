@@ -11,12 +11,8 @@ const port = process.env.PORT || 5000;
 app.use(cors())
 app.use(express.json()) 
 
-// journey-joy
-// YlULBTVjzkebAash
 
-
-
-const uri = "mongodb+srv://journey-joy:YlULBTVjzkebAash@cluster0.hjmc0vt.mongodb.net/?retryWrites=true&w=majority";
+const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.hjmc0vt.mongodb.net/?retryWrites=true&w=majority`;
 
 // Create a MongoClient with a MongoClientOptions object to set the Stable API version
 const client = new MongoClient(uri, {
@@ -32,7 +28,19 @@ async function run() {
     // Connect the client to the server	(optional starting in v4.7)
       await client.connect();
       
+      const spotsCollections = client.db("spotsDB").collection("spots")
 
+    app.get('/spots', async(req, res) => {
+        const result = await spotsCollections.find().toArray()
+        res.send(result)
+    })
+      
+    app.post('/spots', async (req, res) => {
+        const spots = req.body;
+
+        const result = await spotsCollections.insertOne(spots)
+        res.send(result);
+    })
 
 
     // Send a ping to confirm a successful connection
