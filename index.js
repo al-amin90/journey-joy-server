@@ -35,6 +35,14 @@ async function run() {
         res.send(result)
     })
       
+      app.get('/spots/:email', async (req, res) => {
+          const email = req.params.email;
+          console.log(email);
+          const query = { email: email }
+          const result = await spotsCollections.find(query).toArray()
+          res.send(result)
+    })
+      
     app.post('/spots', async (req, res) => {
         const spots = req.body;
 
