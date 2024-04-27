@@ -3,7 +3,7 @@ const express = require('express');
 const cors = require('cors');
 const app = express()
 
-// config 
+// configs
 require('dotenv').config()
 const port = process.env.PORT || 5000;
 
@@ -29,6 +29,7 @@ async function run() {
       await client.connect();
       
       const spotsCollections = client.db("spotsDB").collection("spots")
+      const countriesCollections = client.db("spotsDB").collection("countries")
 
     app.get('/spots', async(req, res) => {
         const result = await spotsCollections.find().toArray()
@@ -44,8 +45,15 @@ async function run() {
       
     app.get('/spots/:email', async (req, res) => {
         const email = req.params.email;
-        console.log(email);
         const query = { email: email }
+        const result = await spotsCollections.find(query).toArray()
+        res.send(result)
+    })
+      
+    app.get('/countrySpots/:name', async (req, res) => {
+        const name = req.params.name;
+        console.log(name);
+        const query = { countryName:name }
         const result = await spotsCollections.find(query).toArray()
         res.send(result)
     })
