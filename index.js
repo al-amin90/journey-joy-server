@@ -43,17 +43,17 @@ async function run() {
         res.send(result)
     })
       
-    app.get('/spots/:email', async (req, res) => {
-        const email = req.params.email;
-        const query = { email: email }
-        const result = await spotsCollections.find(query).toArray()
-        res.send(result)
-    })
-      
     app.get('/countrySpots/:name', async (req, res) => {
         const name = req.params.name;
         console.log(name);
         const query = { countryName:name }
+        const result = await spotsCollections.find(query).toArray()
+        res.send(result)
+    })
+      
+    app.get('/spots/:email', async (req, res) => {
+        const email = req.params.email;
+        const query = { email: email }
         const result = await spotsCollections.find(query).toArray()
         res.send(result)
     })
